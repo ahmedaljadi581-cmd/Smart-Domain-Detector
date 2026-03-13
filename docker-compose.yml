@@ -1,0 +1,16 @@
+services:
+  smart-domain-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-domain-detector
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      USE_VITE_DEV: "false"
+      PDCP_API_KEY: ${PDCP_API_KEY:-}
+      BUFFEROVER_API_KEY: ${BUFFEROVER_API_KEY:-}
+    volumes:
+      - ./backend/data:/app/backend/data
+    restart: unless-stopped
