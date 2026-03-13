@@ -1,5 +1,24 @@
 # Smart Domain Detector
-> ⚠️ Security Research Tool – Use responsibly and only on systems you own or have permission to test.
+Smart Domain Detector is a cybersecurity reconnaissance tool designed to identify suspicious, newly registered, or look-alike domains that may indicate phishing or brand impersonation.
+
+> # Smart Domain Detector
+
+> ⚠️ **Disclaimer**
+>
+> This tool is intended for **educational purposes and authorized security testing only**.
+>
+> Smart Domain Detector is designed to help cybersecurity professionals and researchers detect suspicious domains such as phishing, typosquatting, and newly registered domains.
+>
+> **Do not use this tool against systems, domains, or infrastructure without explicit authorization.**
+>
+> The author assumes **no responsibility for misuse or illegal activities** performed using this software.
+> 
+> Designed for:
+- SOC analysts
+- Threat hunters
+- Bug bounty researchers
+- Security researchers
+  
 <p align="center">
   <img src="images/1.png" alt="Smart Domain Detector logo" width="760" />
 </p>
